@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me - Sampada Tiwari</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #0066ff, #00d4ff);
+            --gradient-secondary: linear-gradient(135deg, #1a1a1a, #2d2d3a);
+            --gradient-accent: linear-gradient(135deg, #00d4ff, #ff00ff);
+            --gradient-navbar: linear-gradient(135deg, rgba(10, 10, 46, 0.95), rgba(26, 26, 46, 0.95));
+            --card-gradient: linear-gradient(145deg, rgba(26, 26, 46, 0.8), rgba(45, 45, 58, 0.6));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0a2e 50%, #1a1a1a 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gradient-navbar);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: linear-gradient(135deg, rgba(10, 10, 46, 0.98), rgba(26, 26, 46, 0.98));
+            box-shadow: 0 4px 20px rgba(0, 102, 255, 0.2);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #00d4ff;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 100px;
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .page-title h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .about-card {
+            background: var(--card-gradient);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.3s ease;
+        }
+
+        .about-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.2);
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .education-item,
+        .extracurricular-item,
+        .achievement-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 15px;
+            border-left: 4px solid #0066ff;
+        }
+
+        .education-item:last-child,
+        .extracurricular-item:last-child,
+        .achievement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-icon {
+            font-size: 1.5rem;
+            color: #00d4ff;
+        }
+
+        .item-content h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-content .subtitle {
+            color: #b8b8b8;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .item-content .duration {
+            color: #00d4ff;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .item-bullets {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .item-bullets li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+        }
+
+        .item-bullets li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #0066ff;
+            font-weight: bold;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skill-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.3);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .skill-icon {
+            font-size: 1.5rem;
+            color: #00d4ff;
+        }
+
+        .skill-name {
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        /* Footer */
+        footer {
+            background: #000000;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-text {
+            color: #b8b8b8;
+            font-size: 0.9rem;
+        }
+
+        .heart {
+            color: #ff00ff;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 100%;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 100%);
+                background: var(--gradient-navbar);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                padding-top: 2rem;
+                transition: left 0.3s ease;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-menu li {
+                margin: 1rem 0;
+            }
+
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            .about-card {
+                padding: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title h1 {
+                font-size: 1.8rem;
+            }
+
+            .about-card {
+                padding: 1rem;
+            }
+
+            .education-item,
+            .extracurricular-item,
+            .achievement-item {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">Sampada</div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="project.html" class="nav-link">Project</a></li>
+                    <li><a href="contactme.html" class="nav-link">Contact Me</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Page Title -->
+            <section class="page-title">
+                <h1>About Me</h1>
+            </section>
+
+            <!-- Education Section -->
+            <section class="about-card" id="education">
+                <h2 class="card-title">Education</h2>
+                
+                <div class="education-item">
+                    <div class="item-header">
+                        <i class="fas fa-graduation-cap item-icon"></i>
+                        <div class="item-content">
+                            <h3>Master of Computer Applications (MCA)</h3>
+                            <div class="subtitle">Banasthali Vidyapith, Rajasthan</div>
+                            <div class="duration">2024 – Present</div>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Pursuing post-graduate studies with a focus on web development, user interface design, and application structure.</li>
+                        <li>Worked in a team-based project during 2nd semester and contributed as the Frontend Developer, designing interactive and responsive pages.</li>
+                        <li>Actively participating in tech-focused coursework, improving design thinking and development planning skills.</li>
+                    </ul>
+                </div>
+
+                <div class="education-item">
+                    <div class="item-header">
+                        <i class="fas fa-laptop-code item-icon"></i>
+                        <div class="item-content">
+                            <h3>Bachelor of Computer Applications (BCA)</h3>
+                            <div class="subtitle">Banasthali Vidyapith, Rajasthan</div>
+                            <div class="duration">2021 – 2024</div>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Completed comprehensive coursework in computer fundamentals, application logic, and software concepts.</li>
+                        <li>In the final year, collaborated with a team to develop a full-fledged project, where I handled the entire frontend development, ensuring clean layout, responsiveness, and user-friendly design.</li>
+                        <li>Engaged in hands-on projects that encouraged creativity, teamwork, and real-world problem solving.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Skills Section -->
+            <section class="about-card" id="skills">
+                <h2 class="card-title">Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <i class="fab fa-html5 skill-icon"></i>
+                        <span class="skill-name">HTML5</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-css3-alt skill-icon"></i>
+                        <span class="skill-name">CSS3</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-js-square skill-icon"></i>
+                        <span class="skill-name">JavaScript</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-bootstrap skill-icon"></i>
+                        <span class="skill-name">Bootstrap</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-code skill-icon"></i>
+                        <span class="skill-name">C with DSA</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-cogs skill-icon"></i>
+                        <span class="skill-name">Software Engineering</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-palette skill-icon"></i>
+                        <span class="skill-name">Multimedia & Web Design</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-js-square skill-icon"></i>
+                        <span class="skill-name">React.js</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-js-square skill-icon"></i>
+                        <span class="skill-name">XML</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-palette skill-icon"></i>
+                        <span class="skill-name">UI/UX</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-code skill-icon"></i>
+                        <span class="skill-name">PHP</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Extra Curricular Section -->
+            <section class="about-card" id="extracurricular">
+                <h2 class="card-title">Extra Curricular</h2>
+                
+                <div class="extracurricular-item">
+                    <div class="item-header">
+                        <i class="fas fa-certificate item-icon"></i>
+                        <div class="item-content">
+                            <h3>Certificate Course in French</h3>
+                            <div class="subtitle">Banasthali Vidyapith, Rajasthan</div>
+                            <div class="duration">2022 – 2023</div>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Developed a foundational understanding of the French language, including pronunciation, everyday vocabulary, and sentence structure used in common conversations.</li>
+                        <li>Learned to express personal and basic information by using salutations, describing oneself and others, and talking about countries and nationalities in French.</li>
+                        <li>Gained clarity on essential grammar concepts such as the use of articles, different verb tenses, and imperative sentence formation to build accurate and simple sentences.</li>
+                    </ul>
+                </div>
+
+                <div class="extracurricular-item">
+                    <div class="item-header">
+                        <i class="fas fa-scroll item-icon"></i>
+                        <div class="item-content">
+                            <h3>Diploma in French</h3>
+                            <div class="subtitle">Banasthali Vidyapith, Rajasthan</div>
+                            <div class="duration">2024 – 2025</div>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Advancing communication skills through interactive speaking exercises, role plays, and structured dialogues aimed at achieving fluency in day-to-day French communication.</li>
+                        <li>Practicing formal writing techniques, including paragraph construction, essay writing, and summarizing information in French with clarity and coherence.</li>
+                        <li>Building confidence in communicative French, focusing on clarity, cultural context, and linguistic accuracy to enhance both personal and professional language proficiency.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Achievements Section -->
+            <section class="about-card" id="achievements">
+                <h2 class="card-title">Achievements</h2>
+                
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <i class="fas fa-trophy item-icon"></i>
+                        <div class="item-content">
+                            <h3>Winner – Hack Celestia 2023</h3>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Secured 1st position in Hack Celestia 2023, a competitive national-level hackathon.</li>
+                        <li>Developed an innovative tech solution within a collaborative team environment.</li>
+                        <li>Appreciated for creative thinking, UI development, and problem-solving skills.</li>
+                    </ul>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <i class="fas fa-globe item-icon"></i>
+                        <div class="item-content">
+                            <h3>Participant – Le Grand Concours 2024</h3>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Participated in an international French competition organized by Banasthali Vidyapith, in collaboration with the Embassy of France in India and Uzbekistan State World Languages University.</li>
+                        <li>Engaged in written and oral expression tasks that promoted multilingual communication.</li>
+                        <li>Strengthened cross-cultural awareness and linguistic confidence.</li>
+                    </ul>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <i class="fas fa-users item-icon"></i>
+                        <div class="item-content">
+                            <h3>Selected – Global Action Ambassador, Global Goals Summit 2025</h3>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Shortlisted among the top 100 global candidates for the Global Goals Summit 2025.</li>
+                        <li>Recognized for leadership potential and contributions aligned with UN Sustainable Development Goals (SDGs).</li>
+                        <li>Though unable to attend, selection itself reflects global recognition and potential.</li>
+                    </ul>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <i class="fas fa-medal item-icon"></i>
+                        <div class="item-content">
+                            <h3>8th Rank – Girlscript Summer of Code (GSSoC) 2024</h3>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Ranked among the top 10 mentors (8th position) in Girlscript Summer of Code 2024.</li>
+                        <li>Guided open-source contributors, reviewed pull requests, and maintained project progress.</li>
+                        <li>Honored for active mentorship and impactful technical contributions.</li>
+                    </ul>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <i class="fas fa-rocket item-icon"></i>
+                        <div class="item-content">
+                            <h3>Lead Participant – NASA Space Apps Challenge 2024</h3>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Took the role of team lead in the NASA Space Apps Hackathon 2024, managing the team's development workflow.</li>
+                        <li>Worked on space-themed challenges involving real-world data and scientific problems.</li>
+                        <li>Demonstrated leadership, technical coordination, and a passion for global collaboration in STEM.</li>
+                    </ul>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <i class="fas fa-handshake item-icon"></i>
+                        <div class="item-content">
+                            <h3>Selected – BRICS Summer School Summit 2025</h3>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Officially selected for the BRICS Summer School Summit 2025, representing Indian youth in a multinational learning platform.</li>
+                        <li>The program focused on topics like diplomacy, sustainable development, and global policy.</li>
+                        <li>Although unable to participate, the selection marked a recognition of academic and leadership excellence.</li>
+                    </ul>
+                </div>
+                 <div class="achievement-item">
+                    <div class="item-header">
+                        <i class="fas fa-handshake item-icon"></i>
+                        <div class="item-content">
+                            <h3>Discord Moderator at GSsoc'2025</h3>
+                        </div>
+                    </div>
+                    <ul class="item-bullets">
+                        <li>Resolved 2,000+ contributor queries and streamlined communication, ensuring a positive community experience and 
+                            achieving 90% smooth workflow among contributors and team members.</li>
+                        <li>Monitored contributor performance and generated actionable insights, driving accountability and 
+                            improving overall project efficiency by 90%.</li>
+                        <li>Coordinated community activities, announcements, and
+                             task assignments, ensuring timely execution and enhancing collaboration between contributors and core team members.</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="footer-text">Made by Sampada Tiwari<span class="heart">❤️</span></p>
+        </div>
+    </footer>
+
+    <script>
+        // Page load animation
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Close mobile menu on outside click
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('revealed');
+                    }, index * 200);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards
+        document.querySelectorAll('.about-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Active nav link highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 100;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
